@@ -20,6 +20,7 @@ services:
       - './scripts:/var/www/scripts'
       - './src:/var/www/src'
       - './var:/var/www/var'
+      - './node_modules:/var/www/node_modules'
     tmpfs:
       - /var/www/dist
     ports:
