@@ -3,7 +3,7 @@ const jwa = require('jwa');
 const hmac = jwa('HS256');
 import { sgnSrc } from '../lib/util'
 
-class FredhopperProcessor {
+class FredhopperProductProcessor {
     constructor(config){
         this._config = config
     }
@@ -55,11 +55,13 @@ class FredhopperProcessor {
             };
             item.attribute.forEach(function(attribute) {
                 let name = getMagentoFriendlyAttribute(attribute.name);
+                let value = checkFredhopperOverrides(attribute.name, attribute.value[0].value);
+
                 if(name === 'sku') {
-                    hit._id = attribute.value[0].value;
-                    hit._source.id = attribute.value[0].value;
+                    hit._id = value;
+                    hit._source.id = value;
                 }
-                hit._source[name] = attribute.value[0].value;
+                hit._source[name] = value;
             });
 
             response.hits.hits.push(hit);
@@ -68,24 +70,36 @@ class FredhopperProcessor {
         // aggregations
         response.aggregations = {};
         selectedUniverse['facetmap'][0].filter.forEach(function(filter) {
-            response.aggregations['agg_terms_'+filter.on] = {
-                doc_count_error_upper_bound: null,
-                sum_other_doc_count: null,
-                buckets: []
-            };
-
-            response.aggregations['agg_terms_'+filter.on+'_options'] = {
-                doc_count_error_upper_bound: null,
-                sum_other_doc_count: null,
-                buckets: []
-            };
-
-            filter.filtersection.forEach(function (value) {
-                response.aggregations['agg_terms_'+filter.on+'_options'].buckets.push({
-                    key: value.value.value,
-                    doc_count: value.nr
-                });
+            let hidden = false;
+            filter['custom-fields']['custom-field'].forEach(function(field) {
+                if(field.name === 'Style') {
+                    if(field.value === 'Hidden') {
+                        hidden = true;
+                    }
+                }
             });
+
+            if(hidden === false) {
+                response.aggregations['agg_terms_' + filter.on] = {
+                    doc_count_error_upper_bound: null,
+                    sum_other_doc_count: null,
+                    buckets: []
+                };
+
+                response.aggregations['agg_terms_' + filter.on + '_options'] = {
+                    doc_count_error_upper_bound: null,
+                    sum_other_doc_count: null,
+                    buckets: []
+                };
+
+                filter.filtersection.forEach(function (value) {
+                    response.aggregations['agg_terms_' + filter.on + '_options'].buckets.push({
+                        key: value.value.value,
+                        label: value.link.name,
+                        doc_count: value.nr
+                    });
+                });
+            }
         });
 
         // selectedUniverse.facetmap.filter.forEach is not a function
@@ -112,7 +126,18 @@ class FredhopperProcessor {
             //         return name;
             // }
         }
+
+        function checkFredhopperOverrides(key, value) {
+            let data = config.fredhopperfas.attribute_override;
+
+            if(data[key]) {
+                return data[key];
+            }
+
+            // no override found
+            return value;
+        }
     }
 }
 
-module.exports = FredhopperProcessor
+module.exports = FredhopperProductProcessor

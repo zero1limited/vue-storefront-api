@@ -114,6 +114,54 @@ program
         })
     });
 
+program
+    .command('import-categories')
+    .option('--store-code <storeCode>', 'storeCode in multistore setup', null)
+    .action((cmd) => {
+    let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
+
+    if (cmd.storeCode) {
+        const storeView = config.storeViews[cmd.storeCode]
+        if (!storeView) {
+            console.error('Wrong storeCode provided - no such store in the config.storeViews[storeCode]', cmd.storeCode)
+            process.exit(-1)
+        } else {
+            magentoConfig.INDEX_NAME = storeView.elasticsearch.index;
+            magentoConfig.MAGENTO_STORE_ID = storeView.storeId;
+        }
+    }
+
+    const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
+
+    let importCategoriesPromise = function() {
+        console.log(' == CATEGORIES IMPORTER ==');
+        return exec('node', [
+            '--harmony',
+            'node_modules/mage2vuestorefront/src/cli.js',
+            'categories',
+            '--removeNonExistent=true',
+            '--extendedCategories=true',
+            '--generateUniqueUrlKeys=false'
+        ], { env: env, shell: true })
+    }
+
+    let reindexPromise = function() {
+        console.log(' == REINDEXING DATABASE ==')
+        return exec('node', [
+            'scripts/db.js',
+            'rebuild',
+            `--indexName=${env.INDEX_NAME}`
+        ], {env: env, shell: true})
+    }
+
+    importCategoriesPromise().then (() => {
+            //reindexPromise().then( () => {
+                console.log('Done! Bye Bye!')
+                process.exit(0)
+            //})
+        })
+});
+
 
 program
   .on('command:*', () => {

@@ -3,7 +3,7 @@ const jwa = require('jwa');
 const hmac = jwa('HS256');
 import { sgnSrc } from '../lib/util'
 
-class FredhopperProductProcessor {
+class FredhopperAttributeProcessor {
     constructor(config){
         this._config = config
     }
@@ -37,82 +37,90 @@ class FredhopperProductProcessor {
 
         // hits
         response.hits = {
-            total: selectedUniverse['items-section'].items.item.length,
+            total: selectedUniverse['facetmap'][0].filter.length,
             max_score: null
         };
 
         // hits.hits
         response.hits.hits = [];
-        selectedUniverse['items-section'].items.item.forEach(function(item) {
-            let hit = {
-                _index: 'vue_storefront_catalog',
-                _type: 'product',
-                _id: null,
-                _score: null,
-                _source: {
-                    id: null
-                }
-            };
-            item.attribute.forEach(function(attribute) {
-                let name = getMagentoFriendlyAttribute(attribute.name);
-                if(name === 'sku') {
-                    hit._id = attribute.value[0].value;
-                    hit._source.id = attribute.value[0].value;
-                }
-                hit._source[name] = attribute.value[0].value;
-            });
+        // return response;
+        //dwdw
 
-            response.hits.hits.push(hit);
-        });
-
-        // aggregations
-        response.aggregations = {};
+        let count = 0;
         selectedUniverse['facetmap'][0].filter.forEach(function(filter) {
-            response.aggregations['agg_terms_'+filter.on] = {
-                doc_count_error_upper_bound: null,
-                sum_other_doc_count: null,
-                buckets: []
-            };
 
-            response.aggregations['agg_terms_'+filter.on+'_options'] = {
-                doc_count_error_upper_bound: null,
-                sum_other_doc_count: null,
-                buckets: []
-            };
-
-            filter.filtersection.forEach(function (value) {
-                response.aggregations['agg_terms_'+filter.on+'_options'].buckets.push({
-                    key: value.value.value,
-                    doc_count: value.nr
-                });
+            let hidden = false;
+            filter['custom-fields']['custom-field'].forEach(function(field) {
+                if(field.name === 'Style') {
+                    if(field.value === 'Hidden') {
+                        hidden = true;
+                    }
+                }
             });
-        });
 
-        // selectedUniverse.facetmap.filter.forEach is not a function
-        //  response.aggregations[("agg_terms_" + filter.title + "_options")].buckets.push i
+            if(hidden === false) {
+                count = count + 1;
+
+                let hit = {
+                    _index: 'vue_storefront_catalog_db_fr',
+                    _type: 'attribute',
+                    _id: count,
+                    _score: null,
+                    _source: {
+                        id: count,
+                        options: [],
+                        is_wysiwyg_enabled: false,
+                        is_html_allowed_on_front: false,
+                        used_for_sort_by: false,
+                        is_filterable: true,
+                        is_filterable_in_search: false,
+                        is_used_in_grid: true,
+                        is_visible_in_grid: false,
+                        is_filterable_in_grid: true,
+                        position: 0,
+                        apply_to: [
+                            "simple",
+                            "virtual",
+                            "configurable"
+                        ],
+                        is_searchable: "1",
+                        is_visible_in_advanced_search: "1",
+                        is_comparable: "1",
+                        is_used_for_promo_rules: "0",
+                        is_visible_on_front: "1",
+                        used_in_product_listing: "1",
+                        is_visible: true,
+                        attribute_id: count,
+                        attribute_code: filter.on,
+                        frontend_input: "select",
+                        entity_type_id: "4",
+                        is_required: false,
+                        is_user_defined: true,
+                        default_frontend_label: filter.title,
+                        frontend_label: filter.title,
+                        backend_type: "",
+                        source_model: null,
+                        default_value: "",
+                        is_unique: "0",
+                        validation_rules: [],
+                        tsk: null
+                    }
+                };
+
+                filter.filtersection.forEach(function (value) {
+                    hit._source.options.push({
+                        label: value.link.name,
+                        value: value.value.value
+                    })
+                });
+
+
+                response.hits.hits.push(hit);
+            }
+        });
 
         return response;
-
-        function getMagentoFriendlyAttribute(name) {
-            let data = config.fredhopperfas.attribute_mappings;
-
-            if(data[name]) {
-                return data[name]
-            }
-
-            return name;
-            // switch(name) {
-            //     case 'foo':
-            //         return 'bar';
-            //     case '_imageurl':
-            //         return 'image';
-            //     case '_thumburl':
-            //         return 'thumbnail';
-            //     default:
-            //         return name;
-            // }
-        }
     }
 }
 
-module.exports = FredhopperProductProcessor
+module.exports = FredhopperAttributeProcessor

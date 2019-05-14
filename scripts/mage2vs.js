@@ -71,7 +71,7 @@ program
   .option('--store-code <storeCode>', 'storeCode in multistore setup', null)
   .option('--adapter <adapter>', 'name of the adapter', 'magento')
   .option('--partitions <partitions>', 'number of partitions', 1)
-  .option('--partitionSize <partitionSize>', 'size of the partitions', 200)
+  .option('--partitionSize <partitionSize>', 'size of the partitions', 50)
   .option('--initQueue <initQueue>', 'use the queue', true)
   .option('--skus <skus>', 'comma delimited list of SKUs to fetch fresh informations from', '')
   .option('--removeNonExistent <removeNonExistent>', 'remove non existent products', false)
