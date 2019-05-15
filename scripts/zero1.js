@@ -162,6 +162,20 @@ program
         })
 });
 
+program
+  .command('import-attributes')
+  .action((cmd) => {
+    let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
+    const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
+
+    console.log(' == ATTRIBUTES IMPORTER ==');
+    return exec('node', [
+      '--harmony',
+      'node_modules/mage2vuestorefront/src/cli.js',
+      'attributes',
+      '--removeNonExistent=true'
+    ], { env: env, shell: true })
+  });
 
 program
   .on('command:*', () => {
