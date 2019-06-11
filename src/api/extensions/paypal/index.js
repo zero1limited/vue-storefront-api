@@ -12,6 +12,10 @@ module.exports = ({ config, db }) => {
 
     console.log('request =' + JSON.stringify(req.body))
 
+    // Callum's code to fix the
+    let transactions = req.body.transactions;
+    transactions[0].amount.currency = 'EUR';
+
     request.post(config.extensions.paypal.api + '/v1/payments/payment', {
       auth: {
         user: config.extensions.paypal.client,
@@ -22,8 +26,8 @@ module.exports = ({ config, db }) => {
         payer: { payment_method: 'paypal' },
         transactions: req.body.transactions,
         redirect_urls: {
-          return_url: 'https://www.mysite.com', // TODO: move to local.json
-          cancel_url: 'https://www.mysite.com'
+          return_url: 'https://vuejs-dare2b-com-7148.00.mdoq.io', // TODO: move to local.json
+          cancel_url: 'https://vuejs-dare2b-com-7148.00.mdoq.io'
         }
       },
       json: true
