@@ -132,6 +132,7 @@ program
     }
 
     const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
+    env['SEO_USE_URL_DISPATCHER'] = false
 
     let importCategoriesPromise = function() {
         console.log(' == CATEGORIES IMPORTER ==');
