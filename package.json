@@ -2,7 +2,7 @@
   "name": "vue-storefront-api",
   "version": "1.9.3",
   "private": true,
-  "description": "vue-storefront API and data services",
+  "description": "vue-storefront API and data services (Zero1 modified)",
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src\"",
@@ -72,7 +72,7 @@
     "jwt-simple": "^0.5.1",
     "kue": "^0.11.6",
     "lodash": "^4.17.10",
-    "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
+    "mage2vuestorefront": "git+https://github.com/zero1limited/mage2vuestorefront",
     "magento1-vsbridge-client": "github:DivanteLtd/magento1-vsbridge-client",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
     "merge-graphql-schemas": "^1.5.2",

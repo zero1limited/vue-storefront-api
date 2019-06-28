@@ -131,8 +131,7 @@ program
         }
     }
 
-    const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
-    env['SEO_USE_URL_DISPATCHER'] = false
+    const env = Object.assign({}, magentoConfig, process.env);  // use process env as well
 
     let importCategoriesPromise = function() {
         console.log(' == CATEGORIES IMPORTER ==');
@@ -166,8 +165,9 @@ program
 program
   .command('import-attributes')
   .action((cmd) => {
-    let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
-    const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
+    let magentoConfig = getMagentoDefaultConfig(cmd.storeCode);
+
+    const env = Object.assign({}, magentoConfig, process.env);  // use process env as well
 
     console.log(' == ATTRIBUTES IMPORTER ==');
     return exec('node', [
