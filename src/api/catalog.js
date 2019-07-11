@@ -107,8 +107,6 @@ export default ({config, db}) => function (req, res, body) {
 
 	try {
 		if(entityType === 'product') {
-
-
 			if (req.query.request) {
 				requestBody = JSON.parse(decodeURIComponent(req.query.request));
 				if(requestBody.query.bool.filter.bool) {
@@ -220,8 +218,8 @@ export default ({config, db}) => function (req, res, body) {
 				});
 			};
 
-			let getFredhopperProducts = function(fredhopperCategoryId) {
-				console.debug('->getFredhopperProducts(%s)', fredhopperCategoryId);
+			let getFredhopperProductSkus = function(fredhopperCategoryId) {
+				console.debug('->getFredhopperProductSkus(%s)', fredhopperCategoryId);
 				return new Promise((resolve, reject) => {
 
 					let furl = config.fredhopperfas.protocol + config.fredhopperfas.host + '/fredhopper/query?fh_location=//dare2b/fr_FR/categories%3C%7Bdare2b_' + fredhopperCategoryId + '%7D';
@@ -256,9 +254,8 @@ export default ({config, db}) => function (req, res, body) {
 
 						if (_resBody && _resBody.info) {
 							let fredhopperProcessor = factory.getAdapter('fredhopperProduct', indexName, req, res);
-
 							if (fredhopperProcessor) {
-								resolve(fredhopperProcessor.convertToElastic(_resBody));
+								resolve(fredhopperProcessor.getSkuList(_resBody));
 							}else{
 								console.log('Unable to get FredhopperProcessor!');
 								reject('Unable to get FredhopperProcessor!');
@@ -272,21 +269,99 @@ export default ({config, db}) => function (req, res, body) {
 				});
 			};
 
+			let loadFredhopperElasticCombined = function(fredhopperProducts) {
+				console.debug('->loadFredhopperElasticCombined(%s)', fredhopperProducts);
+				return new Promise((resolve, reject) => {
+
+					// Build elasticsearch request
+					let requestBody = {
+						query: {
+							bool: {
+								must: {
+									terms: {
+										sku: fredhopperProducts
+									}
+								}
+							}
+						}
+					};
+
+
+					let url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/vue_storefront_catalog_db_fr/product/_search';
+
+					if (!url.startsWith('http')) {
+						url = 'http://' + url;
+					}
+
+					let auth = null;
+
+					// Only pass auth if configured
+					if (config.elasticsearch.user || config.elasticsearch.password) {
+						auth = {
+							user: config.elasticsearch.user,
+							pass: config.elasticsearch.password
+						};
+					}
+
+					request({ // do the elasticsearch request
+						uri: url,
+						method: 'GET',
+						body: requestBody,
+						json: true,
+						auth: auth
+					}, function (_err, _res, _resBody) { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
+						if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
+
+							// Quick hack because for some reason no products have url_paths
+							_resBody.hits.hits.forEach(function(product) {
+								if(!product._source.url_path && product._source.url_key) {
+									product._source.url_path = product._source.url_key+'/';
+								}
+							});
+
+							let orderedHits = [];
+
+							fredhopperProducts.forEach(function(sku) {
+								_resBody.hits.hits.forEach(function(product) {
+									if(product._source.sku === sku) {
+										orderedHits.push(product);
+									}
+								});
+							});
+
+							_resBody.hits.hits = orderedHits;
+
+							resolve(_resBody);
+						} else {
+							console.error('Elasticsearch call has failed?');
+							console.dir(_resBody);
+							reject('Elasticsearch call has failed?');
+						}
+					});
+				});
+			};
+
 			// =============================================================
 			// 							This is where the magic happens
 			// =============================================================
 			getFreddhopperId(categoryId).then((fredhopperCategoryId) => {
 				console.debug('determined fredhopperCategoryId: %s', fredhopperCategoryId);
-				getFredhopperProducts(fredhopperCategoryId).then((fredhopperProducts) => {
-					console.log('fredhopper products');
+				getFredhopperProductSkus(fredhopperCategoryId).then((fredhopperProducts) => {
+					console.log('fredhopper product SKUs');
 					console.dir(fredhopperProducts);
-					let productProcessor = factory.getAdapter('product', indexName, req, res);
-					productProcessor.process(fredhopperProducts.hits.hits, groupId).then((result) => {
-						fredhopperProducts.hits.hits = result;
-						res.json(fredhopperProducts);
-					}).catch((err) => {
-						console.error(err);
-					});
+
+					loadFredhopperElasticCombined(fredhopperProducts).then((response) => {
+						console.log('response from custom elasticsearch call:');
+						console.log(response);
+
+						let productProcessor = factory.getAdapter('product', indexName, req, res);
+						productProcessor.process(response.hits.hits, groupId).then((result) => {
+							response.hits.hits = result;
+							res.json(response);
+						}).catch((err) => {
+							console.error(err);
+						});
+					})
 				})
 			});
 		}
