@@ -28,16 +28,51 @@ class FredhopperProductProcessor {
             }
         });
 
-        let esSkus = [];
+        response.esSkus = [];
         selectedUniverse['items-section'].items.item.forEach(function(item) {
             item.attribute.forEach(function(attribute) {
                 if(attribute.name === 'p_sku') {
-                    esSkus.push(attribute.value[0].value);
+                    response.esSkus.push(attribute.value[0].value);
                 }
             });
         });
 
-        return esSkus;
+        // aggregations
+        response.aggregations = {};
+        selectedUniverse['facetmap'][0].filter.forEach(function(filter) {
+            let hidden = false;
+            filter['custom-fields']['custom-field'].forEach(function(field) {
+                if(field.name === 'Style') {
+                    if(field.value === 'Hidden') {
+                        hidden = true;
+                    }
+                }
+            });
+
+            if(hidden === false) {
+                response.aggregations['agg_terms_' + filter.on] = {
+                    doc_count_error_upper_bound: null,
+                    sum_other_doc_count: null,
+                    buckets: []
+                };
+
+                response.aggregations['agg_terms_' + filter.on + '_options'] = {
+                    doc_count_error_upper_bound: null,
+                    sum_other_doc_count: null,
+                    buckets: []
+                };
+
+                filter.filtersection.forEach(function (value) {
+                    response.aggregations['agg_terms_' + filter.on + '_options'].buckets.push({
+                        key: value.value.value,
+                        label: value.link.name,
+                        doc_count: value.nr
+                    });
+                });
+            }
+        });
+
+        return response;
     }
 }
 

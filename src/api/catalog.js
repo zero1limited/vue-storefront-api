@@ -122,7 +122,7 @@ export default ({config, db}) => function (req, res, body) {
 					// Get selected Facets from the API request.
 					//
 					try {
-						let shouldTerms = requestBody.query.bool.filter.bool.should[0]
+						let shouldTerms = requestBody.query.bool.filter.bool.should[0];
 
 						// Multiple filters are applied.
 						if(shouldTerms.bool.must) {
@@ -279,7 +279,7 @@ export default ({config, db}) => function (req, res, body) {
 							bool: {
 								must: {
 									terms: {
-										sku: fredhopperProducts
+										sku: fredhopperProducts.esSkus
 									}
 								}
 							}
@@ -321,7 +321,7 @@ export default ({config, db}) => function (req, res, body) {
 
 							let orderedHits = [];
 
-							fredhopperProducts.forEach(function(sku) {
+							fredhopperProducts.esSkus.forEach(function(sku) {
 								_resBody.hits.hits.forEach(function(product) {
 									if(product._source.sku === sku) {
 										orderedHits.push(product);
@@ -330,6 +330,8 @@ export default ({config, db}) => function (req, res, body) {
 							});
 
 							_resBody.hits.hits = orderedHits;
+
+							_resBody.aggregations = fredhopperProducts.aggregations;
 
 							resolve(_resBody);
 						} else {
