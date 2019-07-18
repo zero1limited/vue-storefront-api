@@ -264,7 +264,7 @@ export default ({config, db}) => function (req, res, body) {
 						}
 					}
 
-					furl = $furl+'&fh_sort_by='+fredhopperSortby;
+					furl = furl+'&fh_sort_by='+fredhopperSortby;
 
 
 					// Add view size to our Fredhopper request.
