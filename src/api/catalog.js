@@ -232,7 +232,44 @@ export default ({config, db}) => function (req, res, body) {
 						furl = furl + '/'+value.key+'%3E%7B'+value.value+'%7D';
 					});
 
+
+					// Add the selected sort by to our Fredhopper request.
+					let sortby = decodeURIComponent(req.query.sort);
+					if(sortby === 'undefined') {
+						sortby = null;
+					}
+					let fredhopperSortby = null;
+
+					// above is the current sort by attribute that the user has selected.
+					// these can be entered in the frontend local.json
+
+					// in the backend local.json, you can set what the above maps to for Fredhopper.
+					let sortbyMappings = config.fredhopperfas.sortby_mappings;
+
+					if(sortby !== null) {
+						Object.keys(sortbyMappings).forEach(function(key) {
+							if(sortby === key) {
+								fredhopperSortby = sortbyMappings[key];
+							}
+						});
+					}
+
+					if(fredhopperSortby !== null) {
+						console.log('A PLP sort by attribute has been selected, and mapped to Fredhopper attribute: '+fredhopperSortby);
+					} else {
+						if(sortby === null) {
+							console.log('A PLP sort by attribute has not been selected by the user.');
+						} else {
+							console.log('A PLP sort by attribute has been selected by the user, but we have no mapping for it. Please check the \'fredhopperfas\' configuration in the backend local.json.');
+						}
+					}
+
+					furl = $furl+'&fh_sort_by='+fredhopperSortby;
+
+
+					// Add view size to our Fredhopper request.
 					furl = furl + '&fh_view_size=48';
+
 
 					let fauth = {
 						user: config.fredhopperfas.user,
