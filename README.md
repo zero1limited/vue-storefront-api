@@ -140,6 +140,13 @@ You can use the following command to run a delta indexer for a specific storevie
 yarn mage2vs productsdelta --store-code=de
 ```
 
+## Commands
+Must be ran in the correct/this order  
+Import a attributes: `node scripts/zero1.js import-attributes`  
+Import Categories: `node scripts/zero1.js import-categories --store-code=db_fr`  
+
+Import/Update a single product: `yarn mage2vs productsdelta --store-code=db_fr --skus=DMW456_50Q`
+
 License
 -------
 
