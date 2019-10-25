@@ -19,7 +19,7 @@ Besides a big improvement for the shopping experience, we also want to create a 
 - Docker and Docker Compose
 
 Already included in `vue-storefront-api` Docker image (required locally, if you do not use containerization):
-- Node.js 8.x or higher
+- Node.js 10.x or higher
 - Yarn
 
 ## Installation
@@ -103,13 +103,8 @@ After setting the `config.magento2.api` section using Yours Magento2 oauth crede
 
 ```json
   "magento2": {
-    "url": "http://magento2.demo-1.xyz.com",
     "imgUrl": "http://localhost:8080/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
-    "magentoUserName": "",
-    "magentoUserPassword": "",
-    "httpUserName": "",
-    "httpUserPassword": "",
     "api": {
       "url": "http://demo-magento2.vuestorefront.io/rest",
       "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
@@ -131,6 +126,12 @@ You can run the following command to execute the full import:
 ```bash
  yarn mage2vs import --store-code=de
  ```
+
+ Import of CMS blocks and pages is also performed by the full import. If the CMS API extension ((SnowdogApps/magento2-cms-api)[https://github.com/SnowdogApps/magento2-cms-api]) was not installed in magento 2, it's recommended to skip the CMS import commands.
+
+```bash
+ yarn mage2vs import --skip-blocks --skip-pages
+ ```
  
 ## Executing delta indexer
 
@@ -139,6 +140,13 @@ You can use the following command to run a delta indexer for a specific storevie
 ```
 yarn mage2vs productsdelta --store-code=de
 ```
+
+## Commands
+Must be ran in the correct/this order  
+Import a attributes: `node scripts/zero1.js import-attributes`  
+Import Categories: `node scripts/zero1.js import-categories --store-code=db_fr`  
+
+Import/Update a single product: `yarn mage2vs productsdelta --store-code=db_fr --skus=DMW456_50Q`
 
 License
 -------
