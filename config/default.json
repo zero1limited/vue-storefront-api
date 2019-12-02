@@ -32,6 +32,31 @@
     ],
     "apiVersion": "5.6"
   },
+  "fredhopperfas": {
+    "host": "query.published.live1.fas.eu1.fredhopperservices.com",
+    "protocol": "http://",
+    "user": "<% .Env.VSF_FH_USER %>",
+    "password": "<% .Env.VSF_FH_PASSWORD %>",
+    "attribute_mappings": {
+      "_imageurl": "image",
+      "_thumburl": "thumbnail",
+      "vg_url_key": "url_path",
+      "v_sku": "sku",
+      "p_sku": "parent_sku",
+      "vg_name": "name"
+    },
+    "attribute_override": {
+      "type_id" : "configurable"
+    },
+    "sortby_mappings": {
+      "recommended": null,
+      "latest": null,
+      "latest:desc": null,
+      "latest_d2b": "-newness_fr_fr",
+      "final_price": "price_fr_fr",
+      "final_price:desc": "-price_fr_fr"
+    }
+  },
   "redis": {
     "host": "localhost",
     "port": 6379,
@@ -70,7 +95,7 @@
         "defaultCountry": "DE",
         "defaultRegion": "",
         "calculateServerSide": true,
-		    "sourcePriceIncludesTax": false
+        "sourcePriceIncludesTax": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -100,7 +125,7 @@
         "defaultCountry": "IT",
         "defaultRegion": "",
         "calculateServerSide": true,
-		"sourcePriceIncludesTax": false
+        "sourcePriceIncludesTax": false
       },
       "i18n": {
         "fullCountryName": "Italy",
@@ -126,7 +151,7 @@
     "alwaysSyncPlatformPricesOver": false,
     "usePlatformTotals": true,
     "setConfigurableProductOptions": true,
-	"sourcePriceIncludesTax": false
+    "sourcePriceIncludesTax": false
   },
   "bodyLimit": "100kb",
   "corsHeaders": [
@@ -211,29 +236,29 @@
     "simd": true
   },
   "entities": {
-      "category": {
-        "includeFields": [ "children_data", "id", "children_count", "sku", "name", "is_active", "parent_id", "level", "url_key" ]
-      },
-      "attribute": {
-        "includeFields": [ "attribute_code", "id", "entity_type_id", "options", "default_value", "is_user_defined", "frontend_label", "attribute_id", "default_frontend_label", "is_visible_on_front", "is_visible", "is_comparable" ]
-      },
-      "productList": {
-        "sort": "",
-        "includeFields": [ "type_id", "sku", "product_links", "tax_class_id", "special_price", "special_to_date", "special_from_date", "name", "price", "priceInclTax", "originalPriceInclTax", "originalPrice", "specialPriceInclTax", "id", "image", "sale", "new", "url_key" ],
-        "excludeFields": [ "configurable_children", "description", "configurable_options", "sgn" ]
-      },
-      "productListWithChildren": {
-        "includeFields": [ "type_id", "sku", "name", "tax_class_id", "special_price", "special_to_date", "special_from_date", "price", "priceInclTax", "originalPriceInclTax", "originalPrice", "specialPriceInclTax", "id", "image", "sale", "new", "configurable_children.image", "configurable_children.sku", "configurable_children.price", "configurable_children.special_price", "configurable_children.priceInclTax", "configurable_children.specialPriceInclTax", "configurable_children.originalPrice", "configurable_children.originalPriceInclTax", "configurable_children.color", "configurable_children.size", "product_links", "url_key"],
-        "excludeFields": [ "description", "sgn"]
-      },
-      "product": {
-        "excludeFields": [ "updated_at", "created_at", "attribute_set_id", "status", "visibility", "tier_prices", "options_container", "msrp_display_actual_price_type", "has_options", "stock.manage_stock", "stock.use_config_min_qty", "stock.use_config_notify_stock_qty", "stock.stock_id",  "stock.use_config_backorders", "stock.use_config_enable_qty_inc", "stock.enable_qty_increments", "stock.use_config_manage_stock", "stock.use_config_min_sale_qty", "stock.notify_stock_qty", "stock.use_config_max_sale_qty", "stock.use_config_max_sale_qty", "stock.qty_increments", "small_image"],
-        "includeFields": null,
-        "filterFieldMapping": {
-          "category.name": "category.name.keyword"
-        }
-      }
+    "category": {
+      "includeFields": [ "children_data", "id", "children_count", "sku", "name", "is_active", "parent_id", "level", "url_key" ]
     },
+    "attribute": {
+      "includeFields": [ "attribute_code", "id", "entity_type_id", "options", "default_value", "is_user_defined", "frontend_label", "attribute_id", "default_frontend_label", "is_visible_on_front", "is_visible", "is_comparable" ]
+    },
+    "productList": {
+      "sort": "",
+      "includeFields": [ "type_id", "sku", "product_links", "tax_class_id", "special_price", "special_to_date", "special_from_date", "name", "price", "priceInclTax", "originalPriceInclTax", "originalPrice", "specialPriceInclTax", "id", "image", "sale", "new", "url_key" ],
+      "excludeFields": [ "configurable_children", "description", "configurable_options", "sgn" ]
+    },
+    "productListWithChildren": {
+      "includeFields": [ "type_id", "sku", "name", "tax_class_id", "special_price", "special_to_date", "special_from_date", "price", "priceInclTax", "originalPriceInclTax", "originalPrice", "specialPriceInclTax", "id", "image", "sale", "new", "configurable_children.image", "configurable_children.sku", "configurable_children.price", "configurable_children.special_price", "configurable_children.priceInclTax", "configurable_children.specialPriceInclTax", "configurable_children.originalPrice", "configurable_children.originalPriceInclTax", "configurable_children.color", "configurable_children.size", "product_links", "url_key"],
+      "excludeFields": [ "description", "sgn"]
+    },
+    "product": {
+      "excludeFields": [ "updated_at", "created_at", "attribute_set_id", "status", "visibility", "tier_prices", "options_container", "msrp_display_actual_price_type", "has_options", "stock.manage_stock", "stock.use_config_min_qty", "stock.use_config_notify_stock_qty", "stock.stock_id",  "stock.use_config_backorders", "stock.use_config_enable_qty_inc", "stock.enable_qty_increments", "stock.use_config_manage_stock", "stock.use_config_min_sale_qty", "stock.notify_stock_qty", "stock.use_config_max_sale_qty", "stock.use_config_max_sale_qty", "stock.qty_increments", "small_image"],
+      "includeFields": null,
+      "filterFieldMapping": {
+        "category.name": "category.name.keyword"
+      }
+    }
+  },
   "usePriceTiers": false,
   "boost": {
     "name": 3,
