@@ -1,7 +1,7 @@
 {
   "server": {
-    "host": "localhost",
-    "port": 8080,
+    "host": "<% .Env.VSF_SERVER_HOST %>",
+    "port": <% .Env.VSF_SERVER_PORT %>,
     "searchEngine": "elasticsearch"
   },
   "orders": {
@@ -11,11 +11,11 @@
     "excludeDisabledProducts": false
   },
   "elasticsearch": {
-    "host": "localhost",
-    "port": 9200,
-    "protocol": "http",
-    "user": "elastic",
-    "password": "changeme",
+    "host": "<% .Env.VSF_ELASTICSEARCH_HOST %>",
+    "port": <%, .Env.VSF_ELASTICSEARCH_PORT %>,
+    "protocol": "<% .Env.VSF_ELASTICSEARCH_PROTOCOL %>",
+    "user": "<% .Env.VSF_ELASTICSEARCH_USERNAME %>",
+    "password": "<% .Env.VSF_ELASTICSEARCH_PASSWORD %>",
     "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
@@ -33,9 +33,9 @@
     "apiVersion": "5.6"
   },
   "redis": {
-    "host": "localhost",
-    "port": 6379,
-    "db": 0,
+    "host": "<% .Env.VSF_REDIS_HOST %>",
+    "port": <%, .Env.VSF_REDIS_PORT %>,
+    "db": <%, .Env.VSF_REDIS_DB %>,
     "auth": false
   },
   "kue": {},
@@ -114,8 +114,8 @@
       }
     }
   },
-  "authHashSecret": "__SECRET_CHANGE_ME__",
-  "objHashSecret": "__SECRET_CHANGE_ME__",
+  "authHashSecret": "<% .Env.VSF_AUTH_HASH_SECRET %>",
+  "objHashSecret": "<% .Env.VSF_OBJECT_HASH_SECRET %>",
   "cart": {
     "setConfigurableProductOptions": false
   },
