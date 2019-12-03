@@ -164,14 +164,14 @@
     }
   },
   "magento2": {
-    "imgUrl": "http://demo-magento2.vuestorefront.io/media/catalog/product",
-    "assetPath": "/../var/magento2-sample-data/pub/media",
+    "imgUrl": "<% .Env.VSF_MAGENTO2_IMAGEURL %>",
+    "assetPath": "<% .Env.VSF_MAGENTO2_ASSETPATH %>",
     "api": {
-      "url": "http://demo-magento2.vuestorefront.io/rest",
-      "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
-      "consumerSecret": "u9q4fcobv7vfx9td80oupa6uhexc27rb",
-      "accessToken": "040xx3qy7s0j28o3q0exrfop579cy20m",
-      "accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"
+      "url": "<% .Env.VSF_MAGENTO2_API_URL %>",
+      "consumerKey": "<% .Env.VSF_MAGENTO2_API_CONSUMERKEY %>",
+      "consumerSecret": "<% .Env.VSF_MAGENTO2_API_CONSUMERSECRET %>",
+      "accessToken": "<% .Env.VSF_MAGENTO2_API_ACCESSTOKEN %>",
+      "accessTokenSecret": "<% .Env.VSF_MAGENTO2_API_ACCESSTOKEN_SECRET %>"
     }
   },
   "magento1": {
