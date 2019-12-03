@@ -1,7 +1,7 @@
 {
   "server": {
     "host": "<% .Env.VSF_SERVER_HOST %>",
-    "port": <% .Env.VSF_SERVER_PORT %>,
+    "port": "<% .Env.VSF_SERVER_PORT %>",
     "searchEngine": "elasticsearch"
   },
   "orders": {
@@ -12,7 +12,7 @@
   },
   "elasticsearch": {
     "host": "<% .Env.VSF_ELASTICSEARCH_HOST %>",
-    "port": <%, .Env.VSF_ELASTICSEARCH_PORT %>,
+    "port": "<% .Env.VSF_ELASTICSEARCH_PORT %>",
     "protocol": "<% .Env.VSF_ELASTICSEARCH_PROTOCOL %>",
     "user": "<% .Env.VSF_ELASTICSEARCH_USERNAME %>",
     "password": "<% .Env.VSF_ELASTICSEARCH_PASSWORD %>",
@@ -34,8 +34,8 @@
   },
   "redis": {
     "host": "<% .Env.VSF_REDIS_HOST %>",
-    "port": <%, .Env.VSF_REDIS_PORT %>,
-    "db": <%, .Env.VSF_REDIS_DB %>,
+    "port": "<% .Env.VSF_REDIS_PORT %>",
+    "db": "<% .Env.VSF_REDIS_DB %>",
     "auth": false
   },
   "kue": {},
