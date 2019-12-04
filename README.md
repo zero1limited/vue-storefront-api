@@ -149,7 +149,7 @@ Import Categories: `node scripts/zero1.js import-categories --store-code=db_fr`
 Import/Update a single product: `yarn mage2vs productsdelta --store-code=db_fr --skus=DMW456_50Q`
 
 License
---------
+---------
 
 [MIT](./LICENSE)
  
