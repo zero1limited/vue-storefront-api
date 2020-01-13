@@ -22,6 +22,22 @@ function addUserGroupToken(config, result) {
   }
 }
 
+function addWebsiteId(config, req) {
+
+    if(!req.query.storeCode) {
+        return req.body;
+    }
+
+    const storeCode = req.query.storeCode;
+    if(!config.storeViews[storeCode].websiteId) {
+        return req.body;
+    }
+
+    const websiteId = config.storeViews[storeCode].websiteId;
+    req.body.customer.website_id = websiteId;
+    return req.body;
+}
+
 export default ({config, db}) => {
 
 	let userApi = Router();
@@ -36,7 +52,6 @@ export default ({config, db}) => {
 	 * POST create an user
 	 */
 	userApi.post('/create', (req, res) => {
-
 		const ajv = new Ajv();
 		const userRegisterSchema = require('../models/userRegister.schema.json')
 		let userRegisterSchemaExtension = {};
@@ -49,6 +64,8 @@ export default ({config, db}) => {
 			apiStatus(res, validate.errors, 400);
 			return;
 		}
+
+        req.body = addWebsiteId(config, req);
 
 		const userProxy = _getProxy(req)
 
@@ -64,6 +81,9 @@ export default ({config, db}) => {
 	 */
 	userApi.post('/login', (req, res) => {
 		const userProxy = _getProxy(req)
+
+//         this might not be needed.
+//         req.body = addWebsiteId(config, req);
 
 		userProxy.login(req.body).then((result) => {
 			/**

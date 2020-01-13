@@ -112,8 +112,11 @@ export default ({config, db}) => function (req, res, body) {
 				if(requestBody.query.bool.filter.bool) {
 					// Find the category ID from the API request.
 					let mustTerms = requestBody.query.bool.filter.bool.must;
+
+                    console.log('must terms: ');
 					mustTerms.forEach(function (term) {
 						if (term.terms.category_ids) {
+                            console.log(term.terms.category_ids);
 							categoryId = term.terms.category_ids[0];
 						}
 					});
@@ -206,7 +209,7 @@ export default ({config, db}) => function (req, res, body) {
 
 						if (_resBody && _resBody.hits && _resBody.hits.hits) {
 							fredhopperCategoryId = _get(_resBody, 'hits.hits[0]._source.fredhopper_category_id', null);
-							console.log('A Fredhopper category ID has been found: ' + fredhopperCategoryId);
+							console.log('A Fredhopper category ID has been found: ' + fredhopperCategoryId + ' for category: '+ categoryId);
 							if (fredhopperCategoryId === null) {
 								reject('Unable to find Fredhopper Category Id in ElasticSearch, from category ID: ' + categoryId);
 							}
@@ -222,10 +225,11 @@ export default ({config, db}) => function (req, res, body) {
 				console.debug('->getFredhopperProductSkus(%s)', fredhopperCategoryId);
 				return new Promise((resolve, reject) => {
 
-					let furl = config.fredhopperfas.protocol + config.fredhopperfas.host + '/fredhopper/query?fh_location=//dare2b/fr_FR/categories%3C%7Bdare2b_' + fredhopperCategoryId + '%7D';
+//                     fredhopperCategoryId = '5d1f39b4c4812f08f8000143';
+					let furl = config.fredhopperfas.protocol + config.fredhopperfas.host + '/fredhopper/query?fh_location=//dare2b/fr_FR/categories%3C%7Bdare2b_dare2bfrance_' + fredhopperCategoryId + '%7D';
 
 					// http://query.published.live1.fas.eu1.fredhopperservices.com/fredhopper/query?fh_location=//dare2b/fr_FR/categories%3C%7Bdare2b_mensdare2b%7D/size%3E%7Bxl%7D&fh_view_size=48
-					furl = furl + '/'+'promotional_category_fr_fr'+'%3E%7B'+'zero1_pwa'+'%7D';
+// 					furl = furl + '/'+'promotional_category_fr_fr'+'%3E%7B'+'zero1_pwa'+'%7D';
 
 					// Add selected filters to our Fredhopper request.
 					facetFilters.forEach(function(value) {
