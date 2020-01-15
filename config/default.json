@@ -18,9 +18,7 @@
     "password": "<% .Env.VSF_ELASTICSEARCH_PASSWORD %>",
     "min_score": 0.01,
     "indices": [
-      "vue_storefront_catalog",
-      "vue_storefront_catalog_de",
-      "vue_storefront_catalog_it"
+      "vue_storefront_catalog_db_fr"
     ],
     "indexTypes": [
       "product",
@@ -163,13 +161,22 @@
     "example-magento-api",
     "cms-data",
     "mail-service",
-    "example-processor"
+    "example-processor",
+    "braintree",
+    "fredhopper",
+    "paypal"
   ],
   "extensions": {
     "mailchimp": {
       "listId": "e06875a7e1",
       "apiKey": "a9a3318ea7d30f5c5596bd4a78ae0985-us3",
       "apiUrl": "https://us3.api.mailchimp.com/3.0"
+    },
+    "braintree": {
+      "mode": "<% .Env.VSF_BRAINTREE_MODE %>",
+      "merchantId": "<% .Env.VSF_BRAINTREE_MERCHANT_ID %>",
+      "publicKey": "<% .Env.VSF_BRAINTREE_PUBLIC_KEY %>",
+      "privateKey": "<% .Env.VSF_BRAINTREE_PRIVATE_KEY %>"
     },
     "mailService": {
       "transport": {
@@ -186,6 +193,11 @@
       "resultProcessors": {
         "product": "my-product-processor"
       }
+    },
+    "paypal": {
+      "env": "<% .Env.VSF_PAYPAL_ENV %>",
+      "clientId": "<% .Env.VSF_PAYPAL_CLIENT_ID %>",
+      "secret": "<% .Env.VSF_PAYPAL_SECRET %>"
     }
   },
   "magento2": {
