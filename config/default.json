@@ -78,7 +78,6 @@
     ],
     "db_fr": {
       "websiteId": 45,
-      "storeId": 61,
       "msi": {
         "enabled": false,
         "defaultStockId": 1
