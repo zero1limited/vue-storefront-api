@@ -3,6 +3,7 @@ import { Router } from 'express';
 import PlatformFactory from '../../../platform/factory';
 import jwt from 'jwt-simple';
 import { merge } from 'lodash';
+import request from 'request';
 
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
@@ -82,6 +83,25 @@ export default ({config, db}) => {
 	userApi.post('/login', (req, res) => {
 	  console.log('recaptcha class');
 		const userProxy = _getProxy(req)
+
+    console.log('Verifying Google reCAPTCHA');
+    request({
+      url: 'https://www.google.com/recaptcha/api/siteverify',
+      method: 'POST',
+      json: true,
+      body: {
+        'secret': 'secret',
+        'response': 'response'
+      }
+    }, function (error, response, body) {
+      if (error) {
+        console.error(error)
+        apiStatus(res, 'Error reaching Google.', 500)
+      } else {
+        apiStatus(res, body, 200)
+      }
+    })
+
 
 //         this might not be needed.
 //         req.body = addWebsiteId(config, req);
