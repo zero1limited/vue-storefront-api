@@ -3,6 +3,7 @@ import { Router } from 'express';
 import order from './order';
 import catalog from './catalog';
 import user from './user';
+import recaptchaUser from './extensions/recaptcha/user';
 import stock from './stock';
 import review from './review';
 import cart from './cart';
@@ -19,7 +20,8 @@ export default ({ config, db }) => {
 	api.use('/order', order({ config, db }));
 
 	// mount the user resource
-	api.use('/user', user({ config, db }));
+	// api.use('/user', user({ config, db }));
+	api.use('/user', recaptchaUser({ config, db }));
 
 	// mount the stock resource
 	api.use('/stock', stock({ config, db }));
