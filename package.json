@@ -33,8 +33,8 @@
     "test": "eslint src",
     "setup": "npm run restore; npm run migrate",
     "lint": "eslint --ext .js src migrations scripts",
-    "docker_start_dev": "pm2-dev ecosystem.json $PM2_ARGS",
-    "docker_start_prod": "pm2-docker ecosystem.json --web $PM2_ARGS"
+    "predocker_start": "npm run -s build",
+    "docker_start": "pm2-docker ecosystem.json --web $PM2_ARGS"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
