@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "debug": false,
+  "debug": true,
   "exec": "ts-node src",
   "watch": ["./src"],
   "ext": "ts, js",
