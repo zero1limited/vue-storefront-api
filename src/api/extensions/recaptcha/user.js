@@ -83,16 +83,14 @@ export default ({config, db}) => {
 	userApi.post('/login', (req, res) => {
 	  console.log('recaptcha class');
 		const userProxy = _getProxy(req)
+        
+        console.log('https://www.google.com/recaptcha/api/siteverify'+'?secret='+config.extensions.recaptcha.secret+'&response='+'fewfewfwfw');
 
     console.log('Verifying Google reCAPTCHA');
     request({
-      url: 'https://www.google.com/recaptcha/api/siteverify',
-      method: 'POST',
+      url: 'https://www.google.com/recaptcha/api/siteverify'+'?secret='+config.extensions.recaptcha.secret+'&response='+'fewfewfwfw',
       json: true,
-      body: {
-        'secret': 'secret',
-        'response': 'response'
-      }
+      method: 'POST',
     }, function (error, response, body) {
       if (error) {
         console.error(error)
